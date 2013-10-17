@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 *.Rhistory
 tweetdump.txt
 my_secret_codes.txt
@@ -41,6 +42,9 @@ out_*
 *.xdy
 *.tdo
 =======
+=======
+.Rhistory
+>>>>>>> d3106b0f1354922cf1402701a0a5bcd8e4bf5c2f
 Lecture_[0-9][0-9].Rmd
 Lecture_[0-9][0-9].md
 Gemfile.lock
@@ -48,5 +52,12 @@ _site*
 my_secret_codes.txt
 tweetdump.txt
 *~
+<<<<<<< HEAD
 
 >>>>>>> gh-pages
+=======
+*.aux
+*.log
+*.out
+*.backup
+>>>>>>> d3106b0f1354922cf1402701a0a5bcd8e4bf5c2f
