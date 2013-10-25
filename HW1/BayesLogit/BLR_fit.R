@@ -100,8 +100,7 @@ post = function(n, y, X, beta, mu, sig.inv) {
 #################################################
 
 # Read data corresponding to appropriate sim_num:
-setwd("~/Desktop/SkyDrive/STA 250/Stuff/HW1/BayesLogit/data/")
-dat.df = read.csv(paste("./blr_data_", sim_num, ".csv", sep = ""), header = TRUE)
+dat.df = read.csv(sprintf("~/STA250/Stuff/HW1/BayesLogit/data/blr_data_%d.csv", sim_num), header = TRUE)
 # Extract X and y:
 y = dat.df$y
 X = cbind(dat.df$X1, dat.df$X2)
@@ -111,7 +110,7 @@ beta.res = bayes.logreg(n = dat.df$n, y = y, X = X, beta.0, Sigma.0.inv, verbose
 cred.int = apply(beta.res, 2, function(x)quantile(x, probs = c(0.025, 0.975)))
 percentiles = apply(beta.res, 2, function(x)quantile(x, probs = seq(0.01, 0.99, 0.01)))
 # Write results to a (99 x p) csv file...
-write.table(percentiles, sprintf("./blr_res_%d.csv", sim_num), sep=",", row.names = FALSE, col.names = FALSE)
+write.table(percentiles, sprintf("~/STA250/Stuff/HW1/BayesLogit/results/blr_res_%d.csv", sim_num), sep=",", row.names = FALSE, col.names = FALSE)
 # Go celebrate.
  
 cat("done. :)\n")
