@@ -61,3 +61,5 @@ tweetdump.txt
 *.out
 *.backup
 >>>>>>> d3106b0f1354922cf1402701a0a5bcd8e4bf5c2f
+
+HW1/BayesLogit/data/.RData

@@ -50,54 +50,26 @@ if (length(args)==0){
 
 
 
-bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
+"bayes.logreg" <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
                            print.every=1000,retune=100,verbose=TRUE)
 {
-	beta = matrix(ncol = length(beta.0), nrow = niter+1)
-  beta[1,] = beta.0
-  v = diag(1, ncol(beta))
-  for (i in 2:nrow(beta)){
-    beta[i,] = beta[i-1,]
-    for (j in 1:ncol(beta)){
-      beta[i,j] = rnorm(1, beta[i-1,j], v[j])
-      post1 = post(n, y, X, as.numeric(beta[i,]), as.numeric(beta[i-1,]), Sigma.0.inv)
-      post2 = post(n, y, X, as.numeric(beta[i-1,]), as.numeric(beta[i,]), Sigma.0.inv)
-      alpha = post1 - post2
-      if ((alpha < 0) & (runif(1, 0, 1) > exp(alpha))) beta[i, j] = beta[i-1, j]
-    }
-    if (verbose & ((i-1)%%print.every == 0) & i >= burnin) print(beta[i,])
-    if (((i-1)%%retune == 0) & i < burnin) {
-      for (k in 1:ncol(beta)) {
-        
-      }
-    }
-  }
-  return(beta[(burnin+2):nrow(beta),])
+	# Stuff
 }
 
 #################################################
 # Set up the specifications:
-p = 2
 beta.0 <- matrix(c(0,0))
 Sigma.0.inv <- diag(rep(1.0,p))
 niter <- 10000
-post = function(n, y, X, beta, mu, sig.inv) {
-  p1 = t(X %*% beta) %*% y - 1/2 * t(beta - mu) %*% sig.inv %*% (beta - mu) 
-  p2 = - t(n) %*% log(1+exp(X %*% beta))
-  poster = p1 + p2
-  poster
-}
 # etc... (more needed here)
 #################################################
 
 # Read data corresponding to appropriate sim_num:
-setwd("data/")
-dat.df = read.csv(paste("./blr_data_", sim_num, ".csv", sep = ""), header = TRUE)
+
 # Extract X and y:
-y = dat.df$y
-X = cbind(dat.df$X1, dat.df$X2)
+
 # Fit the Bayesian model:
-beta.res = bayes.logreg(n = dat.df$n, y = y, X = X, beta.0, Sigma.0.inv)
+
 # Extract posterior quantiles...
 
 # Write results to a (99 x p) csv file...
@@ -105,6 +77,8 @@ beta.res = bayes.logreg(n = dat.df$n, y = y, X = X, beta.0, Sigma.0.inv)
 # Go celebrate.
  
 cat("done. :)\n")
+
+
 
 
 
