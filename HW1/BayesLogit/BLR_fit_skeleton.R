@@ -55,7 +55,8 @@ bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
 {
 	beta = matrix(ncol = length(beta.0), nrow = niter+1)
   beta[1,] = beta.0
-  v = diag(1, ncol(beta))
+  v = rep(1, ncol(beta))
+  rej = rep(0, ncol(beta))
   for (i in 2:nrow(beta)){
     beta[i,] = beta[i-1,]
     for (j in 1:ncol(beta)){
@@ -63,13 +64,21 @@ bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
       post1 = post(n, y, X, as.numeric(beta[i,]), as.numeric(beta[i-1,]), Sigma.0.inv)
       post2 = post(n, y, X, as.numeric(beta[i-1,]), as.numeric(beta[i,]), Sigma.0.inv)
       alpha = post1 - post2
-      if ((alpha < 0) & (runif(1, 0, 1) > exp(alpha))) beta[i, j] = beta[i-1, j]
-    }
-    if (verbose & ((i-1)%%print.every == 0) & i >= burnin) print(beta[i,])
-    if (((i-1)%%retune == 0) & i < burnin) {
-      for (k in 1:ncol(beta)) {
-        
+      if ((alpha < 0) & (runif(1, 0, 1) > exp(alpha))) {
+        beta[i, j] = beta[i-1, j]
+        rej[j] = rej[j] + 1
       }
+    }
+    if (verbose & ((i-1)%%print.every == 0) & i >= burnin) {
+      cat(paste("Interations:\n",  
+                i-1, "\nSample:\n",
+                paste(beta[i,], collapse=","),"\n\n"))
+                #"\nAcceptance Rate:\n", 
+                #paste(1-rej/(i-1), collapse=",")         
+    }
+    if (((i-1)%%retune == 0) & (i < burnin)) {
+      v[(1-rej/(i-1)) > 0.6] = v[(1-rej/(i-1)) > 0.6] * 1.1
+      v[(1-rej/(i-1)) < 0.3] = v[(1-rej/(i-1)) < 0.3] / 1.1
     }
   }
   return(beta[(burnin+2):nrow(beta),])
@@ -91,17 +100,18 @@ post = function(n, y, X, beta, mu, sig.inv) {
 #################################################
 
 # Read data corresponding to appropriate sim_num:
-setwd("data/")
+setwd("~/Desktop/SkyDrive/STA 250/Stuff/HW1/BayesLogit/data/")
 dat.df = read.csv(paste("./blr_data_", sim_num, ".csv", sep = ""), header = TRUE)
 # Extract X and y:
 y = dat.df$y
 X = cbind(dat.df$X1, dat.df$X2)
 # Fit the Bayesian model:
-beta.res = bayes.logreg(n = dat.df$n, y = y, X = X, beta.0, Sigma.0.inv)
+beta.res = bayes.logreg(n = dat.df$n, y = y, X = X, beta.0, Sigma.0.inv, verbose=FALSE)
 # Extract posterior quantiles...
-
+cred.int = apply(beta.res, 2, function(x)quantile(x, probs = c(0.025, 0.975)))
+percentiles = apply(beta.res, 2, function(x)quantile(x, probs = seq(0.01, 0.99, 0.01)))
 # Write results to a (99 x p) csv file...
-
+write.table(percentiles, sprintf("./blr_res_%d.csv", sim_num), sep=",", row.names = FALSE, col.names = FALSE)
 # Go celebrate.
  
 cat("done. :)\n")
