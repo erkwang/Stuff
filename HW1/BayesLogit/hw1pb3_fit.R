@@ -86,8 +86,8 @@ bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
 
 #################################################
 # Set up the specifications:
-p = 2
-beta.0 <- matrix(c(0,0))
+p = 11
+beta.0 <- matrix(rep(0, p))
 Sigma.0.inv <- diag(rep(1.0,p))
 niter <- 10000
 post = function(n, y, X, beta, mu, sig.inv) {
@@ -100,17 +100,19 @@ post = function(n, y, X, beta, mu, sig.inv) {
 #################################################
 
 # Read data corresponding to appropriate sim_num:
-dat.df = read.csv(sprintf("~/STA250/Stuff/HW1/BayesLogit/data/blr_data_%d.csv", sim_num), header = TRUE)
+dat.df = read.table("SkyDrive/STA 250/Stuff/HW1/BayesLogit/breast_cancer.txt", header = TRUE)
+#standardize covariate
+dat.df[,-11] = sapply(dat.df[,-11], function(x)(x-mean(x))/sd(x))
 # Extract X and y:
-y = dat.df$y
-X = cbind(dat.df$X1, dat.df$X2)
+y = as.numeric(dat.df$diagnosis)-1
+X = cbind(rep(1, nrow(dat.df)), as.matrix(dat.df[,-11]))
 # Fit the Bayesian model:
-beta.res = bayes.logreg(n = dat.df$n, y = y, X = X, beta.0, Sigma.0.inv, verbose=FALSE)
+beta.res = bayes.logreg(n = rep(1, nrow(dat.df)), y = y, X = X, beta.0, Sigma.0.inv, verbose=FALSE)
 # Extract posterior quantiles...
 cred.int = apply(beta.res, 2, function(x)quantile(x, probs = c(0.025, 0.975)))
 percentiles = apply(beta.res, 2, function(x)quantile(x, probs = seq(0.01, 0.99, 0.01)))
 # Write results to a (99 x p) csv file...
-write.table(percentiles, sprintf("~/STA250/Stuff/HW1/BayesLogit/results/blr_res_%d.csv", sim_num), sep=",", row.names = FALSE, col.names = FALSE)
+write.table(percentiles,"SkyDrive/STA 250/Stuff/HW1/BayesLogit/results/pb3_res.csv", sep=",", row.names = FALSE, col.names = FALSE)
 # Go celebrate.
 
 cat("done. :)\n")
