@@ -112,7 +112,17 @@ beta.res = bayes.logreg(n = rep(1, nrow(dat.df)), y = y, X = X, beta.0, Sigma.0.
 cred.int = apply(beta.res, 2, function(x)quantile(x, probs = c(0.025, 0.975)))
 percentiles = apply(beta.res, 2, function(x)quantile(x, probs = seq(0.01, 0.99, 0.01)))
 # Write results to a (99 x p) csv file...
-write.table(percentiles,"SkyDrive/STA 250/Stuff/HW1/BayesLogit/results/pb3_res.csv", sep=",", row.names = FALSE, col.names = FALSE)
+write.table(percentiles,"SkyDrive/STA 250/Stuff/HW1/BayesLogit/pb3_res.csv", 
+            sep=",", row.names = FALSE, col.names = FALSE)
+#compute lag-1 autocorrelations for each component of beta
+acf.beta = apply(beta.res, 2, function(x)acf(x, lag.max = 1)$acf[2])
+pdf("SkyDrive/STA 250/Stuff/HW1/BayesLogit/pb3_acf_plot.pdf")
+plot(acf.beta, axes=FALSE, main = "Lag-1 autocorrelation for each component of beta",
+     xlab = "beta", ylab = "autocorrelation")
+box()
+axis(2)
+axis(1, at=1:11, labels=1:11)
+dev.off()
 # Go celebrate.
 
 cat("done. :)\n")
