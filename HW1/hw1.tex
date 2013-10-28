@@ -42,12 +42,9 @@ The algorithm was performed as the following: \newline
 (4) Since we are using a symmetric proposal distribution, we have $\log\alpha = \log \pi(\beta^{(t)}|\beta^{(t-1)}) - \log \pi(\beta^{(t-1)}|\beta^{(t)})$.
 (5) According to MH algorithm, when $\alpha > 1$, we always accept sample; when $\alpha < 1$, we accept with probability $\alpha$. \newline
 (6) After updating (accepting or rejecting sample) $\beta_0^{(t+1)}$, we sample $\beta_1^{(t+1)}$ from $N(\beta_1^{(t)}, v_1)$ and repeat steps (3) to (5) to update it. \newline
-(7) Set $t = t+1$, repeat steps (2) through (6) until desired iterations or convergence. \newline \newline
-For each dataset, 10000 iterations was performed
-
-
-
-
+(7) Set $t = t+1$, repeat steps (2) through (6) until desired iterations or convergence. \newline
+For each dataset, 10000 iterations were executed and the first 1000 were considered as "burnin" period, during which retuning was performed at every $100^{th}$ iteration: if the acceptance rate for either parameter is too low (less than 20\%), the variance $v_j$ would be divided by 1.1; if the rate is too high (greater than 60\%), the variance would be multiplied by 1.1. \newline
+(iii) The following table and graph display the coverage property based on results from Gauss:
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrr}
@@ -66,8 +63,8 @@ p\_01 & 0.01 & 0.01 \\
    \hline
 \end{tabular}
 \end{table}
-
-
+\newline
+\includegraphics[width=\textwidth]{coverage_line_plot.pdf}
 
 
 
