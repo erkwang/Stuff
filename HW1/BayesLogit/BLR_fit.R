@@ -78,7 +78,7 @@ bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
     }
     if (((i-1)%%retune == 0) & (i < burnin)) {
       v[(1-rej/(i-1)) > 0.6] = v[(1-rej/(i-1)) > 0.6] * 1.1
-      v[(1-rej/(i-1)) < 0.3] = v[(1-rej/(i-1)) < 0.3] / 1.1
+      v[(1-rej/(i-1)) < 0.2] = v[(1-rej/(i-1)) < 0.3] / 1.1
     }
   }
   return(beta[(burnin+2):nrow(beta),])
