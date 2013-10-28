@@ -94,9 +94,10 @@ prob.sam = exp(X %*% t(beta.sam))/(1+exp(X %*% t(beta.sam)))
 y.pred = sapply(prob.sam, function(prob)rbinom(1, 1, prob))
 y.pred = matrix(y.pred, nrow = 569)
 y.stat = colMeans(y.pred)
-hist(y.stat)
+pdf("~/Desktop/SkyDrive/STA 250/Stuff/HW1/BayesLogit/pb3_check.pdf")
+hist(y.stat, main = "Posterior Predictive Check", xlab = "mean of y")
 abline(v = mean(y), col = "red")
-
+dev.off()
 
 
 
