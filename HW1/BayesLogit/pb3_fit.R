@@ -61,8 +61,8 @@ bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
     beta[i,] = beta[i-1,]
     for (j in 1:ncol(beta)){
       beta[i,j] = rnorm(1, beta[i-1,j], v[j])
-      post1 = post(n, y, X, as.numeric(beta[i,]), as.numeric(beta[i-1,]), Sigma.0.inv)
-      post2 = post(n, y, X, as.numeric(beta[i-1,]), as.numeric(beta[i,]), Sigma.0.inv)
+      post1 = post(n, y, X, as.numeric(beta[i,]), as.numeric(beta[i-1,]), diag(v))
+      post2 = post(n, y, X, as.numeric(beta[i-1,]), as.numeric(beta[i,]), diag(v))
       alpha = post1 - post2
       if ((alpha < 0) & (runif(1, 0, 1) > exp(alpha))) {
         beta[i, j] = beta[i-1, j]
@@ -78,7 +78,7 @@ bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
     }
     if (((i-1)%%retune == 0) & (i < burnin)) {
       v[(1-rej/(i-1)) > 0.6] = v[(1-rej/(i-1)) > 0.6] * 1.1
-      v[(1-rej/(i-1)) < 0.3] = v[(1-rej/(i-1)) < 0.3] / 1.1
+      v[(1-rej/(i-1)) < 0.2] = v[(1-rej/(i-1)) < 0.2] / 1.1
     }
   }
   return(beta[(burnin+2):nrow(beta),])
@@ -100,7 +100,7 @@ post = function(n, y, X, beta, mu, sig.inv) {
 #################################################
 
 # Read data corresponding to appropriate sim_num:
-dat.df = read.table("SkyDrive/STA 250/Stuff/HW1/BayesLogit/breast_cancer.txt", header = TRUE)
+dat.df = read.table("~/STA250/Stuff/HW1/BayesLogit/breast_cancer.txt", header = TRUE)
 #standardize covariate
 dat.df[,-11] = sapply(dat.df[,-11], function(x)(x-mean(x))/sd(x))
 # Extract X and y:
