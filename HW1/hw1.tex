@@ -1,0 +1,45 @@
+\documentclass[12pt]{article}
+\usepackage{setspace, amsmath, mathdots, amssymb, graphicx, multirow, gensymb, slashbox}
+\usepackage[margin=1.5in]{geometry}
+\onehalfspacing
+
+\begin{document}
+\noindent STA 250 Homework 1 \newline Yichuan Wang \newline \newline
+\textbf{Problem 2} \newline
+(i)
+\begin{center}
+	$Y_i|\beta \sim \text{Binomial}(m_i, \text{logit}^{-1}(x_i^T\beta)), \beta \in \mathbb{R}^p$
+\end{center}
+So we have
+\begin{align*}
+	p(y_i|\beta) &= {m_i \choose y_i}(\frac{e^{x_i^T\beta}}{1+e^{x_i^T\beta}})^{y_i}(1 - \frac{e^{x_i^T\beta}}{1+e^{x_i^T\beta}})^{m_i - y_i} \\
+	&= {m_i \choose y_i}\frac{e^{(x_i^T\beta)y_i}}{(1+e^{x_i^T\beta})^{m_i}}
+\end{align*}
+Then
+\begin{align*}
+	p(\mathbf{y}|\beta) \propto \frac{\exp({\sum_{i=1}^n(x_i^T\beta)y_i})}{\prod_{i=1}^n (1+e^{x_i^T\beta})^{m_i}}
+\end{align*}
+and
+\begin{align*}
+	p(\beta) \propto \exp[-\frac{1}{2}(\beta - \mu_0)^T \Sigma_0^{-1} (\beta - \mu_0)]
+\end{align*}
+So the posterior is, up to proportionality
+\begin{align*}
+	p(\beta|\mathbf{y}) \propto \frac{\exp[\sum_{i=1}^n(x_i^T\beta)y_i - \frac{1}{2}(\beta - \mu_0)^T \Sigma_0^{-1} (\beta - \mu_0)]}{\prod_{i=1}^n (1+e^{x_i^T\beta})^{m_i}}
+\end{align*}
+We may take logarithm of the proportional posterior for calculation, which is
+\begin{align*}
+	\sum_{i=1}^n(x_i^T\beta)y_i - \frac{1}{2}(\beta - \mu_0)^T \Sigma_0^{-1} (\beta - \mu_0) - \sum_{i=1}^n m_i \log(1+e^{x_i^T\beta})
+\end{align*}
+(ii) 
+
+
+
+
+
+
+
+
+
+
+\end{document}

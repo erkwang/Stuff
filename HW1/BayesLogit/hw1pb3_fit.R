@@ -107,7 +107,8 @@ dat.df[,-11] = sapply(dat.df[,-11], function(x)(x-mean(x))/sd(x))
 y = as.numeric(dat.df$diagnosis)-1
 X = cbind(rep(1, nrow(dat.df)), as.matrix(dat.df[,-11]))
 # Fit the Bayesian model:
-beta.res = bayes.logreg(n = rep(1, nrow(dat.df)), y = y, X = X, beta.0, Sigma.0.inv, verbose=FALSE)
+beta.res = bayes.logreg(n = rep(1, nrow(dat.df)), y = y, X = X, beta.0, Sigma.0.inv, 
+                        niter = 100000, burnin = 10000, verbose=FALSE)
 # Extract posterior quantiles...
 cred.int = apply(beta.res, 2, function(x)quantile(x, probs = c(0.025, 0.975)))
 percentiles = apply(beta.res, 2, function(x)quantile(x, probs = seq(0.01, 0.99, 0.01)))
@@ -123,6 +124,11 @@ box()
 axis(2)
 axis(1, at=1:11, labels=1:11)
 dev.off()
+#Perform posterior predictive check
+post.pred = function(beta, X){
+  
+}
+
 # Go celebrate.
 
 cat("done. :)\n")
