@@ -33,13 +33,34 @@ We may take logarithm of the proportional posterior for calculation, which is
 \end{align*}
 (ii) In this problem, I used the Metropolis-Hastings-within-Gibbs to generate the Markov chain for posterior distribution. The proposal distribution was
 \begin{align*}
-	\beta_0^{(t)} &\sim N(\beta_0^{(t-1)}, v) \\
-	\beta_1^{(t)} &\sim N(\beta_1^{(t-1)}, v)
+	\begin{pmatrix} \beta_0^{(t)} \\ \beta_1^{(t)} \end{pmatrix} | \begin{pmatrix} \beta_0^{(t-1)} \\ \beta_1^{(t-1)} \end{pmatrix} \sim 					N(\begin{pmatrix} \beta_0^{(t-1)} \\ \beta_1^{(t-1)} \end{pmatrix}, \begin{pmatrix} v_0 & 0 \\ 0 & v_1 \end{pmatrix}) \\
 \end{align*}
 The algorithm was performed as the following: \newline
-(1) Set initial values $\beta_0^{(0)} = 0, \beta_1^{(0)} = 0, t = 1, v = 1$. \newline
-(2) Let $\beta_0^{(t)} = \beta_0^{(t-1)}, \beta_1^{(t)} = \beta_1^{(t-1)}$, sample $\beta_0^{(t)}$ from $N(\beta_0^{(t-1)}, v)$
+(1) Set initial values $\beta_0^{(0)} = 0, \beta_1^{(0)} = 0, t = 1$. \newline
+(2) Let $\beta_0^{(t)} = \beta_0^{(t-1)}, \beta_1^{(t)} = \beta_1^{(t-1)}$, sample $\beta_0^{(t)}$ from $N(\beta_0^{(t-1)}, v_0)$
 (3) Compute the 
+
+
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & beta\_0 & beta\_1 \\ 
+  \hline
+p\_01 & 0.01 & 0.01 \\ 
+  p\_05 & 0.07 & 0.03 \\ 
+  p\_10 & 0.10 & 0.06 \\ 
+  p\_25 & 0.27 & 0.20 \\ 
+  p\_50 & 0.52 & 0.48 \\ 
+  p\_75 & 0.76 & 0.77 \\ 
+  p\_90 & 0.92 & 0.88 \\ 
+  p\_95 & 0.94 & 0.95 \\ 
+  p\_99 & 0.99 & 0.99 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 
 
