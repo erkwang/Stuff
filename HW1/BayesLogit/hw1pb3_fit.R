@@ -77,7 +77,7 @@ percentiles = apply(beta.res, 2, function(x)quantile(x, probs = seq(0.01, 0.99, 
 # Write results to a (99 x p) csv file...
 write.table(percentiles,"~/Desktop/SkyDrive/STA 250/Stuff/HW1/BayesLogit/pb3_res.csv", 
             sep=",", row.names = FALSE, col.names = FALSE)
-save(beta.res, "SkyDrive/STA 250/Stuff/HW1/BayesLogit/pb3_beta_res.rda")
+save(beta.res, file = "~/Desktop/SkyDrive/STA 250/Stuff/HW1/BayesLogit/pb3_beta_res.rda")
 #compute lag-1 autocorrelations for each component of beta
 acf.beta = apply(beta.res, 2, function(x)acf(x, lag.max = 1)$acf[2])
 pdf("~/Desktop/SkyDrive/STA 250/Stuff/HW1/BayesLogit/pb3_acf_plot.pdf")

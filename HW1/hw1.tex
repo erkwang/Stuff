@@ -36,9 +36,14 @@ We may take logarithm of the proportional posterior for calculation, which is
 	\begin{pmatrix} \beta_0^{(t)} \\ \beta_1^{(t)} \end{pmatrix} | \begin{pmatrix} \beta_0^{(t-1)} \\ \beta_1^{(t-1)} \end{pmatrix} \sim 					N(\begin{pmatrix} \beta_0^{(t-1)} \\ \beta_1^{(t-1)} \end{pmatrix}, \begin{pmatrix} v_0 & 0 \\ 0 & v_1 \end{pmatrix}) \\
 \end{align*}
 The algorithm was performed as the following: \newline
-(1) Set initial values $\beta_0^{(0)} = 0, \beta_1^{(0)} = 0, t = 1$. \newline
-(2) Let $\beta_0^{(t)} = \beta_0^{(t-1)}, \beta_1^{(t)} = \beta_1^{(t-1)}$, sample $\beta_0^{(t)}$ from $N(\beta_0^{(t-1)}, v_0)$
-(3) Compute the 
+(1) Set initial values $\beta_0^{(0)} = 0, \beta_1^{(0)} = 0, t = 0, v_0 = v_1 = 1$. \newline
+(2) Let $\beta_0^{(t+1)} = \beta_0^{(t)}, \beta_1^{(t+1)} = \beta_1^{(t)}$, sample $\beta_0^{(t+1)}$ from $N(\beta_0^{(t)}, v_0)$. \newline
+(3) Compute the logarithm posterior of $\begin{pmatrix} \beta_0^{(t+1)} \\ \beta_1^{(t+1)} \end{pmatrix} | \begin{pmatrix} \beta_0^{(t)} \\ \beta_1^{(t)} \end{pmatrix}$, $\log \pi(\beta^{(t+1)}|\beta^{(t)})$, as well as the logarithm posterior of $\begin{pmatrix} \beta_0^{(t)} \\ \beta_1^{(t)} \end{pmatrix} | \begin{pmatrix} \beta_0^{(t+1)} \\ \beta_1^{(t+1)} \end{pmatrix}$, $\log \pi(\beta^{(t)}|\beta^{(t+1)})$. \newline
+(4) Since we are using a symmetric proposal distribution, we have $\log\alpha = \log \pi(\beta^{(t)}|\beta^{(t-1)}) - \log \pi(\beta^{(t-1)}|\beta^{(t)})$.
+(5) According to MH algorithm, when $\alpha > 1$, we always accept sample; when $\alpha < 1$, we accept with probability $\alpha$. \newline
+(6) After updating (accepting or rejecting sample) $\beta_0^{(t+1)}$, we sample $\beta_1^{(t+1)}$ from $N(\beta_1^{(t)}, v_1)$ and repeat steps (3) to (5) to update it. \newline
+(7) Set $t = t+1$, repeat steps (2) through (6) until desired iterations or convergence. \newline \newline
+For each dataset, 10000 iterations was performed
 
 
 
