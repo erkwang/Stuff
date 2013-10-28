@@ -6,7 +6,7 @@ module load R/3.0.0
 #SBATCH --output=dump/pb3_fit.out
 #SBATCH --error=dump/pb3_fit.err
 
-srun R --no-save --vanilla < hw1pb3_fit.R
+srun R --no-save --vanilla < pb3_fit.R
 
 
 
