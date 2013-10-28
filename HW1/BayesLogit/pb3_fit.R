@@ -11,44 +11,6 @@
 library(mvtnorm)
 library(coda)
 
-########################################################################################
-########################################################################################
-## Handle batch job arguments:
-
-# 1-indexed version is used now.
-args <- commandArgs(TRUE)
-
-cat(paste0("Command-line arguments:\n"))
-print(args)
-
-####
-# sim_start ==> Lowest simulation number to be analyzed by this particular batch job
-###
-
-#######################
-sim_start <- 1000
-length.datasets <- 200
-#######################
-
-if (length(args)==0){
-  sinkit <- FALSE
-  sim_num <- sim_start + 1
-  set.seed(1330931)
-} else {
-  # Sink output to file?
-  sinkit <- TRUE
-  # Decide on the job number, usually start at 1000:
-  sim_num <- sim_start + as.numeric(args[1])
-  # Set a different random seed for every job number!!!
-  set.seed(762*sim_num + 1330931)
-}
-
-# Simulation datasets numbered 1001-1200
-
-########################################################################################
-########################################################################################
-
-
 
 bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
                          print.every=1000,retune=100,verbose=TRUE)
