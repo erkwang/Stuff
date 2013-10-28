@@ -88,6 +88,15 @@ axis(2)
 axis(1, at=1:11, labels=1:11)
 dev.off()
 
-# Go celebrate.
+#Posterior Predictive check
+beta.sam = beta.res[sample(1:nrow(beta.res), 10000, replace = TRUE),]
+prob.sam = exp(X %*% t(beta.sam))/(1+exp(X %*% t(beta.sam)))
+y.pred = sapply(prob.sam, function(prob)rbinom(1, 1, prob))
+y.pred = matrix(y.pred, nrow = 569)
+y.stat = colMeans(y.pred)
+hist(y.stat)
+abline(v = mean(y), col = "red")
 
-cat("done. :)\n")
+
+
+
