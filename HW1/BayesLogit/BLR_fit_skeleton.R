@@ -61,8 +61,8 @@ bayes.logreg <- function(n,y,X,beta.0,Sigma.0.inv,niter=10000,burnin=1000,
     beta[i,] = beta[i-1,]
     for (j in 1:ncol(beta)){
       beta[i,j] = rnorm(1, beta[i-1,j], v[j])
-      post1 = post(n, y, X, as.numeric(beta[i,]), as.numeric(beta[i-1,]), Sigma.0.inv)
-      post2 = post(n, y, X, as.numeric(beta[i-1,]), as.numeric(beta[i,]), Sigma.0.inv)
+      post1 = post(n, y, X, as.numeric(beta[i,]), as.numeric(beta[i-1,]), diag(v))
+      post2 = post(n, y, X, as.numeric(beta[i-1,]), as.numeric(beta[i,]), diag(v))
       alpha = post1 - post2
       if ((alpha < 0) & (runif(1, 0, 1) > exp(alpha))) {
         beta[i, j] = beta[i-1, j]

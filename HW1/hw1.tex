@@ -31,7 +31,15 @@ We may take logarithm of the proportional posterior for calculation, which is
 \begin{align*}
 	\sum_{i=1}^n(x_i^T\beta)y_i - \frac{1}{2}(\beta - \mu_0)^T \Sigma_0^{-1} (\beta - \mu_0) - \sum_{i=1}^n m_i \log(1+e^{x_i^T\beta})
 \end{align*}
-(ii) 
+(ii) In this problem, I used the Metropolis-Hastings-within-Gibbs to generate the Markov chain for posterior distribution. The proposal distribution was
+\begin{align*}
+	\beta_0^{(t)} &\sim N(\beta_0^{(t-1)}, v) \\
+	\beta_1^{(t)} &\sim N(\beta_1^{(t-1)}, v)
+\end{align*}
+The algorithm was performed as the following: \newline
+(1) Set initial values $\beta_0^{(0)} = 0, \beta_1^{(0)} = 0, t = 1, v = 1$. \newline
+(2) Let $\beta_0^{(t)} = \beta_0^{(t-1)}, \beta_1^{(t)} = \beta_1^{(t-1)}$, sample $\beta_0^{(t)}$ from $N(\beta_0^{(t-1)}, v)$
+(3) Compute the 
 
 
 
