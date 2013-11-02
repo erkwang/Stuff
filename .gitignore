@@ -1,0 +1,10 @@
+
+*.aux
+
+*.log
+
+*.gz
+
+HW1/BayesLogit/data/.RData
+
+HW1/BayesLogit/data/.Rhistory
