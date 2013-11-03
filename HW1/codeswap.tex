@@ -1,0 +1,18 @@
+\documentclass[12pt]{article}
+\usepackage{setspace, amsmath, mathdots, amssymb, graphicx, multirow, gensymb, slashbox}
+%\usepackage[margin=1.5in]{geometry}
+\onehalfspacing
+
+\begin{document}
+\noindent STA 250 HW1 Codeswap \newline Yichuan Wang \newline \newline
+Code Reviewed: "Chunjui" \newline \newline
+The code implemented Metropolis-Hastings MCMC algorithm for the Bayes logistic regression model. \newline
+1. Readability: 8 \newline
+Overall the code is not hard to understand; however, since the author did not provide much comment within lines of code, especially for some objects defined such as "upd", the reader had to in order to figure out what exactly it does. The code itself is well structured with proper indents  so that it is easy to identify individual blocks/functions within the code. \newline
+2. Elegance: 7 \newline
+The code and functions within it seemed to be reusable to a certain extent, with the exception that the author defined "p.beta" function within the big "bayes.logreg" function. To my understanding, in most cases it is not recommended to create a function within another function, because it hinders debugging the inside function. The efficiency of the code is questionable because so many for-loops were nested in the "bayes.logreg" function; and the burnin+retuning period was separated from the rest of MCMC. It also seems that the author used a lot of "if" statements, which would significantly decrease the performance of the code. \newline
+3. Kudos \newline
+The author used glm() function to obtain an estimate for the variance in the proposal distribution, which may be helpful for reaching convergence faster. \newline
+4. Advice \newline
+The code can be made more concise, in such way that writing the whole MCMC process as one block of code and reducing the amount of "if" statements. The central part of the code, "bayes.logreg" function, is very big and has a function within; it might be a good idea to write more relatively small functions and utilizing them by calling within the final function, "bayes.logreg" in our case.
+\end{document}
