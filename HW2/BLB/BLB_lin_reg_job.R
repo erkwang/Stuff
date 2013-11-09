@@ -46,8 +46,9 @@ if (length(args)==0){
   # SLURM can use either 0- or 1-indexing...
   # Lets use 1-indexing here...
   #figure out which distinct subset it should use
-  s_index = as.numeric(args[1]) - floor(as.numeric(args[1])/s)*s+1
-  r_index = floor(as.numeric(args[1])/s)+1
+  s_index = as.numeric(args[1]) - floor(as.numeric(args[1])/s)*s
+  if (!s_index) s_index = 5
+  r_index = ceiling(as.numeric(args[1])/s)
   sim_num <- sim_start + as.numeric(args[1])
   sim_seed <- (762*(s_index-1) + 121231)
   set.seed(sim_seed)
