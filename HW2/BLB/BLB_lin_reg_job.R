@@ -9,7 +9,7 @@ library(bigmemory)
 library(biganalytics)
 
 # mini or full?
-mini = TRUE
+mini = FALSE
 if (mini){
   rootfilename <- "blb_lin_reg_mini"
 } else {
@@ -17,8 +17,8 @@ if (mini){
 }
 
 # I/O specifications:
-datapath <- "SkyDrive/STA 250/Stuff/HW2/BLB/"
-outpath <- "SkyDrive/STA 250/Stuff/HW2/BLB/output/"
+datapath <- "/home/pdbaines/data/"
+outpath <- "~/STA250/Stuff/HW2/BLB/output/"
 
 # Find r and s indices:
 s = 5
@@ -46,7 +46,7 @@ if (length(args)==0){
   # SLURM can use either 0- or 1-indexing...
   # Lets use 1-indexing here...
   #figure out which distinct subset it should use
-  s_index = as.numeric(args[1]) - floor(as.numeric(args[1])/s)*s
+  s_index = as.numeric(args[1]) - floor(as.numeric(args[1])/s)*s+1
   r_index = floor(as.numeric(args[1])/s)+1
   sim_num <- sim_start + as.numeric(args[1])
   sim_seed <- (762*(s_index-1) + 121231)
@@ -60,16 +60,17 @@ cat(paste("\nAnalyzing dataset number ",sim_num,"...\n\n",sep=""))
 full.data = attach.big.matrix(paste(datapath, rootfilename, ".desc", sep = ""))
 # Remaining BLB specs:
 gam = 0.7
-b = floor(nrow(full.data)*gam)
-y.index = ncol(full.data)
+b = floor(nrow(full.data)^gam)
 # Extract the subset:
-sample.data = as.big.matrix(full.data[sample(1:nrow(full.data), b, replace = FALSE)])
+sample.index = sample(1:nrow(full.data), b, replace = FALSE)
+y = full.data[sample.index,ncol(full.data)]
+x = full.data[sample.index,-ncol(full.data)]
 # Reset simulation seed:
 set.seed(123*(sim_num - 1) + 121231)
 # Bootstrap dataset:
 boot.weights = as.numeric(rmultinom(1 , nrow(full.data), prob = rep(1, b)))
 # Fit lm:
-boot.fit = lm(sample.data[,y.index] ~ sample.data[,-y.index], weights=boot.weights)
+boot.fit = lm(y~-1+x, weights=boot.weights)
 # Output file:
 outfile = paste0(outpath,"coef_",sprintf("%02d",s_index),"_",sprintf("%02d",r_index),".txt", sep = "")
 # Save estimates to file:
