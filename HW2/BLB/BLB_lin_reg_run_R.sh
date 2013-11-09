@@ -6,10 +6,6 @@ module load R
 #SBATCH --mem-per-cpu=6000
 #SARRAY --range=1-250
 
-# Email notifications (optional), type=BEGIN, END, FAIL, ALL
-##SBATCH --mail-type=ALL
-##SBATCH --mail-user=pdbaines@ucdavis.edu
-
 # Standard out and Standard Error output files with the job number in the name.
 #SBATCH -o dump/BLB_lin_reg_job_%j.out
 #SBATCH -e dump/BLB_lin_reg_job_%j.err
