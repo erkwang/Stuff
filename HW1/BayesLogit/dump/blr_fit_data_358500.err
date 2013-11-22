@@ -1,0 +1,6 @@
+Module R 3.0.0 Loaded.
+Loading required package: lattice
+Error in setwd("~/STA 250/Stuff/HW1/BayesLogit/data/") : 
+  cannot change working directory
+Execution halted
+srun: error: c0-15: task 0: Exited with exit code 1

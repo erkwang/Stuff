@@ -1,0 +1,6 @@
+ModuleCmd_Load.c(204):ERROR:105: Unable to locate a modulefile for 'R/3.0.0'
+Warning message:
+package ‘mvtnorm’ was built under R version 3.0.2 
+Loading required package: lattice
+Warning message:
+package ‘coda’ was built under R version 3.0.2 

@@ -1,0 +1,12 @@
+Module R 3.0.2 Loaded.
+
+bigmemory >= 4.0 is a major revision since 3.1.2; please see packages
+biganalytics and and bigtabulate and http://www.bigmemory.org for more information.
+
+Warning message:
+In attach.resource(info, path = path) :
+  big.matrix object could only be opened read-only.
+slurmd[c0-20]: *** JOB 546091 CANCELLED AT 2013-11-09T04:27:17 ***
+srun: got SIGCONT
+srun: forcing job termination
+slurmd[c0-20]: *** STEP 546091.0 CANCELLED AT 2013-11-09T04:27:17 ***
