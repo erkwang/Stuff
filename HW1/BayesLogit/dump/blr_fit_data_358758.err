@@ -1,9 +1,0 @@
-Module R 3.0.0 Loaded.
-Loading required package: lattice
-Error in file(file, "rt") : cannot open the connection
-Calls: read.csv -> read.table -> file
-In addition: Warning message:
-In file(file, "rt") :
-  cannot open file '/home/erikent/STA 250/Stuff/HW1/BayesLogit/data/blr_data_1016.csv': No such file or directory
-Execution halted
-srun: error: c0-14: task 0: Exited with exit code 1
