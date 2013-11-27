@@ -86,5 +86,5 @@ llh.sec.deriv = function(lambda) {
 #around 0/1
 solution.bs = bsf(llh.deriv, c(0.01, 0.99), maxit = 10000, 
                   tol = 1e-10)
-solution.nr = nrf(llh.deriv, llh.sec.deriv, 0.5, maxit = 10000,
+solution.nr = nrf(llh.deriv, llh.sec.deriv, 0.1, maxit = 10000,
                   tol = 1e-10)
