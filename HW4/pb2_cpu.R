@@ -40,12 +40,18 @@ probit_mcmc_cpu = function(
   return(as.mcmc(t(beta[,(burnin+2):ncol(beta)])))
 }
 
-dat = read.table("~/Desktop/SkyDrive/STA 250/Stuff/HW4/data_01.txt",header = TRUE)
+cpu_time = list()
+estimates = list()
+
+for (j in 1:5) {
+dat = read.table(sprintf("~/Desktop/SkyDrive/STA 250/Stuff/HW4/data_0%d.txt",j),header = TRUE)
 y = dat$y
 X = as.matrix(dat[,-1])
 
-mcmc_cpu_time = system.time(expr={
-  betas = probit_mcmc_cpu(y, X, rep(0, ncol(X)), diag(rep(1, ncol(X))), 2000, 500)
+cpu_time[[j]] = system.time(expr={
+  estimates[[j]] = probit_mcmc_cpu(y, X, rep(0, ncol(X)), diag(rep(1, ncol(X))), 2000, 500)
 })
-
+}
+save(cpu_time, file = "./cpu_time.rda")
+save(estimates, file = "./estimates.rda")
 
