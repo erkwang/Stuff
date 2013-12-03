@@ -6,17 +6,7 @@
 library(coda)
 library(mvtnorm)
 library(MASS)
-
-#set up truncated normal function
-rtrunc = function(mu, sigma, interval){
-  l = interval[1]
-  u = interval[2]
-  val = rnorm(1, mu, sigma)
-  while (val < l | val > u) {
-    val = rnorm(1, mu, sigma)
-  }
-  val
-}
+library(msm)
 
 #CPU function for Probit MCMC
 probit_mcmc_cpu = function(
@@ -32,29 +22,30 @@ probit_mcmc_cpu = function(
   beta[,1] = beta_0
   #posterior variance matrix for beta's
   Sigma.post = ginv(Sigma_0_inv + t(X) %*% X)
+  #pre-allocate vector z
+  z = numeric(length(y))
   for (i in 2:ncol(beta)){
     #sample z_k's
-    z = numeric(length(y))
     for (k in 1:length(y)) {
       if (y[k] == 0) {
-        z[k] = rtrunc(mu = X[k,] %*% beta[,i-1], sigma = 1, c(-Inf,0))
+        z[k] = rtnorm(1, mean = X[k,] %*% beta[,i-1], upper = 0)
       }
       else {
-        z[k] = rtrunc(mu = X[k,] %*% beta[,i-1], sigma = 1, c(0,Inf))
+        z[k] = rtnorm(1, mean = X[k,] %*% beta[,i-1], lower = 0)
       }
     }
-    beta[,i] = rmvnorm(n=1, mean = Sigma.post %*% (Sigma_0_inv %*% beta[,i]+t(X) %*% z),
+    beta[,i] = rmvnorm(n=1, mean = Sigma.post %*% (Sigma_0_inv %*% beta_0+t(X) %*% z),
                        sigma=Sigma.post)
   }
   return(as.mcmc(t(beta[,(burnin+2):ncol(beta)])))
 }
 
-dat = read.table("~/Desktop/SkyDrive/STA 250/Stuff/HW4/mini_data.txt",header = TRUE)
+dat = read.table("~/Desktop/SkyDrive/STA 250/Stuff/HW4/data_01.txt",header = TRUE)
 y = dat$y
 X = as.matrix(dat[,-1])
 
 mcmc_cpu_time = system.time(expr={
-  betas = probit_mcmc_cpu(y, X, rep(0, ncol(X)), diag(rep(1, ncol(X))), 2000, 100)
+  betas = probit_mcmc_cpu(y, X, rep(0, ncol(X)), diag(rep(1, ncol(X))), 2000, 500)
 })
 
 

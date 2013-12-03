@@ -23,9 +23,13 @@ rtruncnorm_kernel(float *vals, int n,
     int idx = myblock * blocksize + subthread;
 
     // Setup the RNG:
-
+	curandState rng;
+    curand_init(rng_a+idx*rng_b, rng_c, 0, &rng);
+    
     // Sample:
-
+	
+	
+	
     return;
 }
 
