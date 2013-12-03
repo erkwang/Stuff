@@ -44,7 +44,7 @@ cpu_time = list()
 estimates = list()
 
 for (j in 1:5) {
-dat = read.table(sprintf("~/Desktop/SkyDrive/STA 250/Stuff/HW4/data_0%d.txt",j),header = TRUE)
+dat = read.table(sprintf("~/STA250/Stuff/HW4/data_0%d.txt",j),header = TRUE)
 y = dat$y
 X = as.matrix(dat[,-1])
 
