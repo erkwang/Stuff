@@ -49,7 +49,7 @@ y = dat$y
 X = as.matrix(dat[,-1])
 
 cpu_time[[j]] = system.time(expr={
-  estimates[[j]] = probit_mcmc_cpu(y, X, rep(0, ncol(X)), diag(rep(1, ncol(X))), 2000, 500)
+  estimates[[j]] = probit_mcmc_cpu(y, X, rep(0, ncol(X)), diag(rep(1, ncol(X))), 500, 100)
 })
 }
 save(cpu_time, file = "./cpu_time.rda")
