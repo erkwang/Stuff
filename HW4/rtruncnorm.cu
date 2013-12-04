@@ -12,9 +12,7 @@ __global__ void
 rtruncnorm_kernel(float *vals, int n, 
                   float *mu, float *sigma, 
                   float *lo, float *hi,
-                  int mu_len, int sigma_len,
-                  int lo_len, int hi_len,
-                  int maxtries)
+                  int rng_a, int rng_b,	int rng_c)
 {
     // Usual block/thread indexing...
     int myblock = blockIdx.x + blockIdx.y * gridDim.x;
@@ -27,60 +25,62 @@ rtruncnorm_kernel(float *vals, int n,
     curand_init(rng_a+idx*rng_b, rng_c, 0, &rng);
     
     // Sample:
-	if (__device__ int isfinite(lo[idx]) && __device__ int isfinite(hi[idx])) {
+    if (idx < n) {
+	if (isfinite(lo[idx]) && isfinite(hi[idx])) {
 		
 		// sample from both finite
 		float mu_neg = (lo[idx] - mu[idx])/sigma[idx];
 		float mu_pos = (hi[idx] - mu[idx])/sigma[idx];
 		float z = curand_uniform(&rng)*(mu_pos-mu_neg);
-		if (mu_neg > 0) float psi_z = exp(-(mu_neg^2 - z^2)/2) 
-		else if (mu_pos < 0) float psi_z = exp(-(mu_pos^2 - z^2)/2)
-		else float psi_z = exp(-z^2/2);
+		float psi_z = expf(-z*z/2);
+		if (mu_neg > 0) float psi_z = expf(-(mu_neg*mu_neg - z*z)/2);
+		if (mu_pos < 0) float psi_z = expf(-(mu_pos*mu_pos - z*z)/2);
 		float u = curand_uniform(&rng);
 		while (u >= psi_z) {
 			z = curand_uniform(&rng)*(mu_pos-mu_neg);
-			if (mu_neg > 0) psi_z = exp(-(mu_neg^2 - z^2)/2) 
-			else if (mu_pos < 0) psi_z = exp(-(mu_pos^2 - z^2)/2)
-			else psi_z = exp(-z^2/2);
+			psi_z = expf(-z*z/2);
+			if (mu_neg > 0) psi_z = expf(-(mu_neg*mu_neg - z*z)/2);
+			if (mu_pos < 0) psi_z = expf(-(mu_pos*mu_pos - z*z)/2);
 			u = curand_uniform(&rng);
 		}
-		val[idx] = z;
+		vals[idx] = z;
 	}
-	if (!(__device__ int isfinite(lo[idx]))) {
+	if (!isfinite(lo[idx])) {
 		// sample from truncated norm -b to infinity, then reverse sign
 		float mu_neg = (-hi[idx] - mu[idx])/sigma[idx];
-		float alpha = (mu_neg + sqrt(mu_neg^2 + 4))/2;
-		float expo_rand = log(1 - curand_uniform(&rng))/(-alpha);
+		float alpha = (mu_neg + sqrtf(mu_neg*mu_neg + 4))/2;
+		float expo_rand = logf(1 - curand_uniform(&rng))/(-alpha);
 		float z = mu_neg + expo_rand;
-		if (mu_neg < alpha) float psi_z = exp(-(alpha - z)^2/2) 
-		else float psi_z = exp(-(mu_neg - alpha)^2/2 - (alpha - z)^2/2);
+		float psi_z = expf(-(mu_neg - alpha)*(mu_neg - alpha)/2 - (alpha - z)*(alpha - z)/2);
+		if (mu_neg < alpha) float psi_z = expf(-(alpha - z)*(alpha - z)/2);
 		float u = curand_uniform(&rng);
 		while (u >= psi_z) {
-			expo_rand = log(1 - curand_uniform(&rng))/(-alpha);
+			expo_rand = logf(1 - curand_uniform(&rng))/(-alpha);
 			z = mu_neg + expo_rand;
-			if (mu_neg < alpha) psi_z = exp(-(alpha - z)^2/2) 
-			else psi_z = exp(-(mu_neg - alpha)^2/2 - (alpha - z)^2/2);
+			psi_z = expf(-(mu_neg - alpha)*(mu_neg - alpha)/2 - (alpha - z)*(alpha - z)/2);
+			if (mu_neg < alpha) psi_z = expf(-(alpha - z)*(alpha - z)/2);
 			u = curand_uniform(&rng);
 		}
-		val[idx] = -z;
+		vals[idx] = -z;
 	}
-	if (!(__device__ int isfinite(hi[idx]))) {
+	if (!isfinite(hi[idx])) {
 		// sample from truncated norm a to infinity
 		float mu_neg = (lo[idx] - mu[idx])/sigma[idx];
-		float alpha = (mu_neg + sqrt(mu_neg^2 + 4))/2;
-		float expo_rand = log(1 - curand_uniform(&rng))/(-alpha);
+		float alpha = (mu_neg + sqrtf(mu_neg*mu_neg + 4))/2;
+		float expo_rand = logf(1 - curand_uniform(&rng))/(-alpha);
 		float z = mu_neg + expo_rand;
-		if (mu_neg < alpha) float psi_z = exp(-(alpha - z)^2/2) 
-		else float psi_z = exp(-(mu_neg - alpha)^2/2 - (alpha - z)^2/2);
+		float psi_z = expf(-(mu_neg - alpha)*(mu_neg - alpha)/2 - (alpha - z)*(alpha - z)/2);
+		if (mu_neg < alpha) float psi_z = expf(-(alpha - z)*(alpha - z)/2);
 		float u = curand_uniform(&rng);
 		while (u >= psi_z) {
-			expo_rand = log(1 - curand_uniform(&rng))/(-alpha);
+			expo_rand = logf(1 - curand_uniform(&rng))/(-alpha);
 			z = mu_neg + expo_rand;
-			if (mu_neg < alpha) psi_z = exp(-(alpha - z)^2/2) 
-			else psi_z = exp(-(mu_neg - alpha)^2/2 - (alpha - z)^2/2);
+			psi_z = expf(-(mu_neg - alpha)*(mu_neg - alpha)/2 - (alpha - z)*(alpha - z)/2);
+			if (mu_neg < alpha) psi_z = expf(-(alpha - z)*(alpha - z)/2);
 			u = curand_uniform(&rng);
 		}
-		val[idx] = z;
+		vals[idx] = z;
+	}
 	}
 	return;
 }
