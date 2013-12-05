@@ -31,19 +31,19 @@ rtruncnorm_kernel(float *vals, int n,
 		// sample from both finite
 		float mu_neg = (lo[idx] - mu[idx])/sigma[idx];
 		float mu_pos = (hi[idx] - mu[idx])/sigma[idx];
-		float z = curand_uniform(&rng)*(mu_pos-mu_neg);
+		float z = mu_neg + curand_uniform(&rng)*(mu_pos-mu_neg);
 		float psi_z = expf(-z*z/2);
 		if (mu_neg > 0) float psi_z = expf(-(mu_neg*mu_neg - z*z)/2);
 		if (mu_pos < 0) float psi_z = expf(-(mu_pos*mu_pos - z*z)/2);
 		float u = curand_uniform(&rng);
 		while (u >= psi_z) {
-			z = curand_uniform(&rng)*(mu_pos-mu_neg);
+			z = mu_neg + curand_uniform(&rng)*(mu_pos-mu_neg);
 			psi_z = expf(-z*z/2);
 			if (mu_neg > 0) psi_z = expf(-(mu_neg*mu_neg - z*z)/2);
 			if (mu_pos < 0) psi_z = expf(-(mu_pos*mu_pos - z*z)/2);
 			u = curand_uniform(&rng);
 		}
-		vals[idx] = z;
+		vals[idx] = sigma[idx]*z+mu[idx];
 	}
 	if (!isfinite(lo[idx])) {
 		// sample from truncated norm -b to infinity, then reverse sign
@@ -61,7 +61,7 @@ rtruncnorm_kernel(float *vals, int n,
 			if (mu_neg < alpha) psi_z = expf(-(alpha - z)*(alpha - z)/2);
 			u = curand_uniform(&rng);
 		}
-		vals[idx] = -z;
+		vals[idx] = -(sigma[idx]*z+mu[idx]);
 	}
 	if (!isfinite(hi[idx])) {
 		// sample from truncated norm a to infinity
@@ -79,7 +79,7 @@ rtruncnorm_kernel(float *vals, int n,
 			if (mu_neg < alpha) psi_z = expf(-(alpha - z)*(alpha - z)/2);
 			u = curand_uniform(&rng);
 		}
-		vals[idx] = z;
+		vals[idx] = sigma[idx]*z+mu[idx];
 	}
 	}
 	return;

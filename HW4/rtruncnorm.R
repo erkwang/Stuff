@@ -24,10 +24,17 @@ compute_grid <- function(N,sqrt_threads_per_block=16L,grid_nd=1)
 library(RCUDA)
 m = loadModule("rtruncnorm.ptx")
 myKernel = m$rtruncnorm_kernel
-N = 100L
+values = list()
+gpu_time = list()
+for (k in 1:8) {
+N = as.integer(10^k)
 gridsize = compute_grid(N)
-values = numeric(N)
-.cuda(myKernel, "vals" = values, "n" = N, "mu" = rep(2, N), "sigma" = rep(1, N),
+x = numeric(N)
+gpu_time[[k]] = system.time({
+values[[k]] = .cuda(myKernel, "vals" = x, "n" = N, "mu" = rep(2, N), "sigma" = rep(1, N),
 	"lo" = rep(0, N), "hi" = rep(1.5, N), "rng_a" = 2L, "rng_b" = 3L, "rng_c" = 4L,
 	blockDim = gridsize[[2]], gridDim = gridsize[[1]], outputs = "vals")
-save(values, "samples.RDA")
+})
+}
+gpu_results = list(values, gpu_time)
+save(gpu_results, file = "gpu_results.RDA")
