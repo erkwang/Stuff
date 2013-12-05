@@ -47,7 +47,7 @@ rtruncnorm_kernel(float *vals, int n,
 	}
 	if (!isfinite(lo[idx])) {
 		// sample from truncated norm -b to infinity, then reverse sign
-		float mu_neg = (-hi[idx] - mu[idx])/sigma[idx];
+		float mu_neg = -(hi[idx] - mu[idx])/sigma[idx];
 		float alpha = (mu_neg + sqrtf(mu_neg*mu_neg + 4))/2;
 		float expo_rand = logf(1 - curand_uniform(&rng))/(-alpha);
 		float z = mu_neg + expo_rand;
@@ -61,7 +61,7 @@ rtruncnorm_kernel(float *vals, int n,
 			if (mu_neg < alpha) psi_z = expf(-(alpha - z)*(alpha - z)/2);
 			u = curand_uniform(&rng);
 		}
-		vals[idx] = -(sigma[idx]*z+mu[idx]);
+		vals[idx] = (sigma[idx]*(-z)+mu[idx]);
 	}
 	if (!isfinite(hi[idx])) {
 		// sample from truncated norm a to infinity
