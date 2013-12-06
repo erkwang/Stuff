@@ -127,6 +127,23 @@ Overall the Gibbs sampler generally goes:
 \end{enumerate}
 In our case, we set $\beta_0 = \mathbf{0}, \Sigma_0 = \mathbf{I}$. Since the homework mainly focused on comparing CPU and GPU performances, the convergence of generated Markov chain was not tested.
 For the CPU code, I programmed the algorithm in R. For the GPU code, the only part completed on GPU was sampling $Z^{(t+1)}$ by using .cuda() to call the kernel function coded in problem 1, and the rest goes very similarly to CPU code in R. With provided R script, five datasets was simulated; however only the first four datasets were used, because the last one was quite large and not feasible to compute within reasonable time. Additionally only $600$ iterations were executed for each dataset with the first $100$ deemed as "burnin" iterations. 
+After verifying that both CPU and GPU codes worked with the mini dataset, they were executed on the first four datasets as described before. It did not take long for GPU code to finish the Probit MCMC with all four datasets, while the CPU code took a much longer time to finish, especially when the size of dataset gets large. The results are displayed as following (elapsed time in seconds):
+\begin{center}
+	\begin{tabular}{|c|c|c|c|}
+	\hline
+	Dataset & size $n$ & Time for GPU & Time for CPU \\
+	\hline
+	1 & 1000 & 22.801 & 205.796 \\
+	2 & 10000 & 24.145 & 2155.732 \\
+	3 & 100000 & 40.034 & 15442.380 \\
+	4 & 1000000 & 190.982 & NA \\
+	\hline
+	\end{tabular}
+\end{center}
+Perhaps the CPU code I programmed was not very efficient but it was still obvious that GPU offered huge savings in computation time especially as the size of dataset gets large. Note that the fourth dataset took extremely long time and had to be forcefully terminated without returning any result.\newline
+It is apparent that in this problem, GPU gave a huge performance boost when carrying out Probit MCMC, particularly sampling from a truncated normal distribution. Even if the efficiency of CPU code got improved, judging by the result, GPU would remain to perform better especially when we have a dataset with large number of observations. For instance, when $n$ increased from 10000 to 100000, GPU code only took less than twice as much time as needed for smaller n, whereas CPU code took more than seven times. The results showed that GPU/CUDA gives a lot of advantages in speed when the size of dataset increases and task is reasonably simple to handle by threads on the device. \newline \newline
+Discussion for Both Problems \newline \newline
+The focus of this homework was to learn to program in CUDA and carry out certain tasks on GPUs. When writing CUDA code in the .cu file, I did not follow the skeleton exactly and only used the algorithms proposed by Robert (2009) without trying rejection sampling first. Given the efficiency of C, the code performed relatively well, with most tasks finished in a matter of seconds to several minutes, compared to CPU code in R which took many minutes or even hours. Furthermore, the "recycling" was not handled in CUDA code, since such operation can be executed in R quickly; hence arguments "mu" and "sigma" were always vectors of length N when passed to the kernel function. It was noticeable that when the truncation was one-sided, my CUDA code returned very close results to CPU code and theoretical values. But in the two-sided truncation case, GPU did not return a quite close result; it could either be due to the algorithm itself or some flaw in my code, which was not detected when I checked my code against the algorithm in the reference paper.
 
 
 \end{document}
