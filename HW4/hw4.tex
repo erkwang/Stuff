@@ -82,6 +82,51 @@ In this problem, we implemented Gibbs sampler algorithm for Probit MCMC, whose m
 	Z_i | \beta &\sim N(x^T_i\beta, 1) \\
 	\beta &\sim N(\beta_0, \Sigma_0)
 \end{align*}
+Firstly we need to set up the Gibbs sampler by finding marginal posterior distributions of $Z_i^{(t+1)}|Y_i, \beta^{(t)}$ and $\beta^{(t+1)}|Z_1^{(t+1)},\cdots, Z_n^{(t+1)}$, i.e. in each iteration of Gibbs sampler, we want to sample $Z_i$'s first, then update $Z_i$ to sample $\beta$. For $Z_i^{(t+1)}$ from the lecture note, we have
+\begin{align*}
+	Z_i^{(t+1)}|Y_i, \beta^{(t)} \sim \begin{cases}
+		TN(x_i^T\beta^{(t)}, 1; -\infty, 0) &\mbox{when } Y_i = 0 \\
+		TN(x_i^T\beta^{(t)}, 1; 0, \infty) &\mbox{when } Y_i = 1 \\
+	\end{cases}
+\end{align*}
+Next we need to obtain the marginal posterior distribution for $\beta^{(t+1)}|Z_1^{(t+1)},\cdots, Z_n^{(t+1)}$. Let $X = (x_1^T,\cdots,x_n^T)^T, Z = (Z_1, \cdots, Z_n)^T$, then we can see that $Z|\beta \sim N(X\beta, \mathbf{I})$. So for the marginal posterior distribution of $\beta$, we have
+\begin{align*}
+	p(\beta|Z) &\propto p(\beta)p(Z|\beta) \\
+	&\propto exp\{-\frac{1}{2}[(Z - X\beta)^T(Z-X\beta) + (\beta - \beta_0)^T\Sigma_0^{-1}(\beta - \beta_0)]\} \\
+	&\propto exp\{-\frac{1}{2}(\beta^TX^TX\beta - 2Z^TX\beta + \beta^T\Sigma_0^{-1}\beta -2\beta_0^T\Sigma_0^{-1}\beta)\}
+\end{align*}
+By Bayesian theory, given the facts that $\beta$ has a normal prior distribution and the distribution of $Z|\beta$ is also normal, the posterior distribution for $\beta$ should also be normal, more precisely multivariate normal distribution. We can extract the parameters of that normal distribution from the above quadratic expression  of $\beta$:
+\begin{align*}
+	&\beta^TX^TX\beta - 2Z^TX\beta + \beta^T\Sigma_0^{-1}\beta -2\beta_0^T\Sigma_0^{-1}\beta \\
+	&= \beta^T(X^TX + \Sigma_0^{-1})\beta -2(Z^TX+\beta_0^T\Sigma_0^{-1})\beta
+\end{align*}
+If $\beta \sim N(\mu_\beta, \Sigma_\beta)$, then the quadratic expression would contain the following terms:
+\begin{align*}
+	\beta^T\Sigma_\beta^{-1}\beta -2\mu_\beta^T\Sigma_\beta^{-1}\beta
+\end{align*}
+Matching corresponding terms in the expression, we get
+\begin{align*}
+	\Sigma_\beta^{-1} &= (X^TX+\Sigma_0^{-1}) \\
+	\Rightarrow \Sigma_\beta &= (X^TX+\Sigma_0^{-1})^{-1} \\
+	\mu_\beta^T\Sigma_\beta^{-1} &= (Z^TX+\beta_0^T\Sigma_0^{-1}) \\
+	\Rightarrow \Sigma_\beta^{-1}\mu_\beta &= (Z^TX+\beta_0^T\Sigma_0^{-1})^T \\
+	&= (\Sigma_0^{-1}\beta_0 + X^TZ) \\
+	\Rightarrow \mu_\beta &= \Sigma_\beta\Sigma_\beta^{-1}\mu_\beta \\
+	&=(X^TX+\Sigma_0^{-1})^{-1}(\Sigma_0^{-1}\beta_0 + X^TZ)
+\end{align*}
+Therefore we obtain the second step in Gibbs sampler: sample $\beta^{(t+1)}|Z^{(t+1)}$ from multivariate normal distribution
+\begin{center}
+	$N[(X^TX+\Sigma_0^{-1})^{-1}(\Sigma_0^{-1}\beta_0 + X^TZ^{(t+1)}), (X^TX+\Sigma_0^{-1})^{-1}]$
+\end{center} 
+Overall the Gibbs sampler generally goes:
+\begin{enumerate}[(1)]
+	\item Initialize by setting $\beta_0, \Sigma_0$ and $t= 0$.
+	\item Obtain the vector $Z^{(t+1)}$ by sampling each $Z_i^{(t+1)}$ from corresponding truncated normal distribution, either $TN(x_i^T\beta^{(t)}, 1; -\infty, 0)$ when $Y_i = 0$ or $TN(x_i^T\beta^{(t)}, 1; 0, \infty)$ when $Y_i = 1$.
+	\item Sample $\beta^{(t+1)}$ from the multivariate normal distribution given above.
+	\item Check for convergence, if not, increment $t$ to $t+1$, go to step (2) and iterate.
+\end{enumerate}
+In our case, we set $\beta_0 = \mathbf{0}, \Sigma_0 = \mathbf{I}$. Since the homework mainly focused on comparing CPU and GPU performances, the convergence of generated Markov chain was not tested.
+For the CPU code, I programmed the algorithm in R. For the GPU code, the only part completed on GPU was sampling $Z^{(t+1)}$ by using .cuda() to call the kernel function coded in problem 1, and the rest goes very similarly to CPU code in R. With provided R script, five datasets was simulated; however only the first four datasets were used, because the last one was quite large and not feasible to compute within reasonable time. Additionally only $600$ iterations were executed for each dataset with the first $100$ deemed as "burnin" iterations. 
 
 
 \end{document}
