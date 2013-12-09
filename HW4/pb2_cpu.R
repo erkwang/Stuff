@@ -2,6 +2,8 @@
 #YICHUAN WANG
 #PROBLEM 2
 
+#Probit MCMC with cpu
+
 #load necessary packages
 library(coda)
 library(mvtnorm)

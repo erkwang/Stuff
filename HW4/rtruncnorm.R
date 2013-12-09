@@ -1,3 +1,9 @@
+#STA 250 HOMEWORK 4
+#YICHUAN WANG
+#PROBLEM 1
+
+#sample truncated norm with RCUDA and GPU
+
 #function for obtaining blocksize and gridsize
 
 compute_grid <- function(N,sqrt_threads_per_block=16L,grid_nd=1)

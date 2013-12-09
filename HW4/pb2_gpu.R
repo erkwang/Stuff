@@ -2,6 +2,8 @@
 #YICHUAN WANG
 #PROBLEM 2
 
+#Probit MCMC with GPU
+
 #load necessary packages
 library(coda)
 library(mvtnorm)
